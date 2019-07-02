@@ -1,0 +1,24 @@
+FROM ubuntu:16.04
+
+RUN apt-get update && apt-get install -y \
+    software-properties-common \
+    nginx \
+    gettext-base
+
+RUN add-apt-repository ppa:deadsnakes/ppa && apt-get update && apt-get install -y \
+    python3.6 \
+    python3.6-dev \
+    python3-pip \
+    python3-setuptools
+
+RUN ln -sfn /usr/bin/python3.6 /usr/bin/python3 && ln -sfn /usr/bin/python3 /usr/bin/python
+
+WORKDIR /developers-portal
+COPY . /developers-portal
+
+RUN pip3 install -r /developers-portal/requirements-portal.txt
+
+RUN rm -rf /developers-portal/docs/html || true
+RUN cp /developers-portal/deploy/docs/nginx.conf /etc/nginx/nginx.conf
+
+CMD cd /developers-portal/docs && sphinx-build -b html ./source html && /bin/bash -c "sphinx-autobuild -H 0.0.0.0 -p 8080 ./source ./html &" && /bin/bash -c "envsubst '\$PORT' < /etc/nginx/nginx.conf > /etc/nginx/nginx.conf" && nginx -g 'daemon off;'
