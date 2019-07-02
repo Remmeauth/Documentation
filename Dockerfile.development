@@ -1,0 +1,10 @@
+FROM python:3.7
+
+WORKDIR /developers-portal
+COPY . /developers-portal
+
+RUN pip3 install -r /developers-portal/requirements-portal.txt
+
+RUN rm -rf /developers-portal/docs//html || true
+
+CMD cd /developers-portal/docs && sphinx-build -b html ./source html && sphinx-autobuild -H 0.0.0.0 -p 8080 ./source ./html
