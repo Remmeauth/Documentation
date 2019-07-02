@@ -93,7 +93,7 @@ In Remme Protocol there are specific criteria that need to be met to become a BP
 - The power of the vote is built up gradually to 100% over six months. Note: BP earns full and liquid rewards from the start
 
 In case a BP stakes more tokens during the initial locking period, it will increase the locking proportionally.
-For example, an account opens as BP with 100M tokens staked with the initial six month locking period. After 1.5 months they stake an additional 200M tokens. As a result, the locking period is adjusted from the remaining 3.5 months to 5.5 months with a total of 300M tokens staked. 6mon - 6mon*(100M*1.5/6)/(100M+200M) = 5.5mon.
+For example, an account opens as BP with 100M tokens staked with the initial six month locking period. After 1.5 months they stake an additional 200M tokens. As a result, the locking period is adjusted from the remaining 4.5 months to 5.5 months with a total of 300M tokens staked. 6mon - 6mon*(100M*1.5/6)/(100M+200M) = 5.5mon.
 
 
 ## Block Producer Resignation
