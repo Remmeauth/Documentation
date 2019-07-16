@@ -11,4 +11,5 @@ Welcome to Remme Protocol Developers Portal's!
 
    introduction
    getting-started
+   monitoring
    troubleshooting
