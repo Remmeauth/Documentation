@@ -1,7 +1,5 @@
 # Remme Protocol Technical paper
 
-**July 1, 2019**
-
 **Abstract:** The Remme Protocol software introduces a blockchain architecture designed to enable vertical and horizontal scaling of decentralized applications. This is achieved by creating an operating system-like construct upon which applications can be built. The software provides accounts, authentication, databases, asynchronous communication, and the scheduling of applications across many CPU cores or clusters. The resulting technology is a blockchain architecture that may ultimately scale to millions of transactions per second, eliminates user fees, and allows for quick and easy deployment and maintenance of decentralized applications, in the context of a governed blockchain.
 
 **PLEASE NOTE: CRYPTOGRAPHIC TOKENS CITED IN THIS PAPER REFER TO CRYPTOGRAPHIC TOKENS ON A LAUNCHED BLOCKCHAIN THAT ADOPTS THE REMME PROTOCOL SOFTWARE. THEY DO NOT REFER TO THE ERC-20 COMPATIBLE TOKENS BEING DISTRIBUTED ON THE ETHEREUM BLOCKCHAIN IN CONNECTION WITH THE REMME TOKEN DISTRIBUTION.**
@@ -52,10 +50,10 @@ Large scale applications need to divide the workload across multiple CPUs and co
 
 # Consensus Algorithm (BFT-DPOS)
 
-The Remme Protocol software utilizes the only known decentralized consensus algorithm proven capable of meeting the performance requirements of PKI(d) applications on the blockchain, [Delegated Proof of Stake (DPOS)](https://steemit.com/dpos/@dantheman/dpos-consensus-algorithm-this-missing-white-paper).
+The Remme Protocol software utilizes the only known decentralized consensus algorithm proven capable of meeting the performance requirements of next-gen PKI applications on the blockchain, [Delegated Proof of Stake (DPOS)](https://steemit.com/dpos/@dantheman/dpos-consensus-algorithm-this-missing-white-paper).
 Under this algorithm, those who hold a certain amount of tokens on a blockchain adopting the Protocol software may select Block Producers (BPs) through a continuous voting mechanism.
 Anyone who accumulates a minimum required amount of tokens may choose to participate in the block producer election by running for top 21 status or vote for other candidates they trust and feel confident about.
-Active participation in the network's governance (consistent voting and keeping a minimum required token balance staked) is a requirement to participate in the reward distribution process.
+Active participation in the network's governance (consistent voting and keeping a minimum required token balance staked) is a requirement to get a status of Guardian and participate in the stake reward distribution process. 
 The power of the vote is proportional to the number of tokens that the account has agreed to stake (the more tokens you stake, the more influential your vote).
 This system of governance with the block producer election process puts the token holders in charge and sets proper incentives to elect the most credible and professional candidates to produce blocks.
 Otherwise, token holders would incur significant financial losses if the candidates they elected misbehaved and the network delivered a poor service to end users.
@@ -74,32 +72,58 @@ Byzantine Fault Tolerance (BFT) is added to traditional DPOS by allowing all pro
 
 BFT Delegated Proof of Stake is robust under every conceivable natural network disruption and even secure in the face of the corruption of a large minority of producers. Unlike some competing algorithms, BFT can continue to function when a majority of producers fail. During this process, the community can vote to replace the failed producers until it can resume 100% participation.
 
+## Block Rewards
+
+The block reward is divided into the following proportions:
+- 60% - **Stake Reward** - Shared between all Guardians proportionally to their stake.
+- 30% - **Vote Reward** - Shared between the Top 25 Block Producers proportionally to the number of votes they received from Guardians and other accounts (1 staked token = 1 vote).
+- 10% - Remme Savings account
+
+
+The block rewards are credited to the account with a call to the system’s contract method claimrewards. Rewards are liquid and may be staked with a separate transaction.
+
+BP does not get rewarded for the missed blocks. The claimrewards method credits rewards in prorated to the number of blocks that got added into the blockchain by a BP. The remainder (rewards for the missed blocks) gets credited to the Remme Savings account.
+
+## How to Become a Guardian
+
+The Guardians play a key role in the protocol's governance process by delegating this responsibility (via voting) to the Block Producers.
+In Remme Protocol, there are specific criteria that need to be met by an account to get the Guardian status and participate in stake reward distribution:
+- An account needs to stake a minimum 250k REM
+- Tokens are locked for the first six months (you cannot change your mind once you stake)
+- The power of the vote is built up gradually to 100% over six months on a weekly basis. Note: Guardian earns full and liquid rewards from the start
+
+In order to maintain the Guardian status, each account will have to re-assert their vote every month. With those that do not keep their votes up to date for more than a month:
+- Account stops getting stake rewards
+- The influence of last recorded vote decays by half every year
+
+In case a Guardian stakes more tokens during the initial locking period, it will increase the locking proportionally.
+For example, an account starts with 100M tokens staked with the initial six-month locking period. After 1.5 months they stake an additional 200M tokens. As a result, the locking period is adjusted from the remaining 4.5 months to 5.5 months with a total of 300M tokens staked. 6mon - 6mon*(100M*1.5/6)/(100M+200M) = 5.5mon.
+
+Guardians do not need to operate a full node. Staking, voting and claiming rewards can be done via a light client.
+
+## How to become a Block Producer
+
+Any account can register as Block Producer by calling the **regproducer** action in the system contract. It is expected, that BPs would specify the website as a parameter and this website would contain a bp.json file in the root folder. The bp.json has to be compatible with the standard [described here](https://github.com/eosrio/bp-info-standard). 
+
 ## Block Producer Elections
 
-There are two levels of Block Producers:
-- Active BPs (elected Top 21): responsible for producing and continuously adding new blocks to the blockchain.
-- Standby BPs: not producing blocks at a given moment, but may become Active at some point.
+There are different groups of Block Producers depending on the number of votes they received from Guardians and other accounts:
+- The Top 20: Active BPs responsible for producing and continuously adding new blocks to the blockchain.
+- The Top 21-25: BPs become Active to produce blocks in shifts and rotate every six hours. (There is always maximum 21 Active BPs at a given moment)
+- The rest: Standby BPs not producing blocks at a given moment, but may become Active at some point.
 
-Unlike in EOSIO (where all accounts can vote), Remme Protocol puts voting responsibility solely on the accounts that met the criteria and registered themselves as a BP. The registration as a BP implies that an account stakes REM tokens. Once registered, the BP gets the ability to vote (in the proportion of 1 stacked token = 1 vote). A successfully registered BP may decide to run for the Top 21 to become an Active BP or remain a Standby BP. In the Standby case, they should cast their votes in favor of other candidates they trust and believe to be the best candidates to produce blocks responsibly. It is expected that Active BPs will cast their available votes in their own favor.
+Remme Protocol grants voting responsibility to the accounts that have expressed their long-term engagement via staking REM tokens. Once staked, any account gets the ability to vote (in the proportion of 1 staked token = 1 vote).
+Participants should cast their votes in favor of BPs they trust and believe to be the best candidates to produce blocks responsibly. It is expected that BPs will cast their available votes in their own favor.
 
 Some notes:
-- It is permissible to change the candidates a BP votes for and, in this way, immediately vote out the BPs that happen to deliver poor service to the network.
+- It is permissible to change the candidates account votes for and, in this way, immediately vote out the BPs that happen to deliver poor service to the network.
 - It is also possible to vote for multiple candidates simultaneously, however, the number of votes they receive would be split equally among the candidates and would total the size of the staked tokens by the BP.
 
-## How to Become a Block Producer
-In Remme Protocol there are specific criteria that need to be met to become a BP:
-- An account needs to stake a minimum 250k REM to be a BP
-- Tokens are locked for the first six months (you cannot change your mind once you start)
-- The power of the vote is built up gradually to 100% over six months. Note: BP earns full and liquid rewards from the start
+## Unstaking Tokens
 
-In case a BP stakes more tokens during the initial locking period, it will increase the locking proportionally.
-For example, an account opens as BP with 100M tokens staked with the initial six month locking period. After 1.5 months they stake an additional 200M tokens. As a result, the locking period is adjusted from the remaining 4.5 months to 5.5 months with a total of 300M tokens staked. 6mon - 6mon*(100M*1.5/6)/(100M+200M) = 5.5mon.
+An account may decide to unstake tokens (not permitted during the lock period over the first six months of staking). After this, staked tokens will gradually start to release over a period of six months on a weekly basis. This is done to secure the network from speculative behavior among Guardians and BPs.
 
-
-## Block Producer Resignation
-Once the owner decides to resign and no longer serve as a BP, they are required to sign a dedicated transaction that calls the **unregprod** method within the system contract (not permitted during the lock period over the first six months). After this, staked tokens will gradually release over a period of six months. This is done to secure the network from speculative behavior among BPs.
-
-For example, a BP with 300M tokens staked initiated the resignation. After 2 months they decide to restart as a BP. There were 200M tokens left pending release so those tokens come back into the staked and unlocked state. If the BP decides to additionally stake the tokens that were previously released, the entire stake would get locked again per the formula described above.
+For example, an account with 300M staked tokens starts to unstake. After 2 months they decide to stake tokens again. There were 200M tokens left pending release so those tokens come back into the staked and unlocked state. If the account decides to additionally stake the tokens that were previously released, the entire stake would get locked again per the locking formula described earlier.
 
 # Accounts
 
@@ -183,15 +207,15 @@ Adopting the Remme Protocol software on a launched blockchain means bandwidth an
 
 Compared to the EOS blockchain, the Remme Protocol software offers a simplified resource management experience.
 
-Due to the major focus on PKI(d) use cases, we assume that most of the core services within the network are provided by the BPs based on the system smart contracts and only a smaller part of services by the community dApps on top of the core ones. To address this, Remme Protocol allocates the available supply of all three resources (RAM, CPU, NET) simultaneously and proportionally to the number of tokens held in a 3-day-minimum staking contract.
+Due to the major focus on next-gen PKI use cases, we assume that most of the core services within the network are provided by the BPs based on the system smart contracts and only a smaller part of services by the community dApps on top of the core ones. To address this, Remme Protocol allocates the available supply of all three resources (RAM, CPU, NET) simultaneously and proportionally to the number of tokens in long term staking contract.
 For example, by staking 1% of the total token supply, an account gets the potential to utilize 1% of all resources (either by running its own dApp or using someone else's dApp).
 
-On the contrary to the user smart contracts, the system contracts provide various PKI(d) services based on a subscription or per use model.
+On the contrary to the user smart contracts, the system contracts provide various PKI services based on a subscription or per use model.
 For example, a user would pay a certain flat fee to store a device public key and its revocation status for a period of one year. After the period ends, the key transits into an expired state and the system contract frees up the RAM resources.
 
 Remme Protocol has a flat fee to create an account. A new account gets created with the minimum required allocation of CPU, NET and RAM resources that allows users to store the account data in the state and perform about 3-5 average transactions per day at no additional cost. The goal is to let the vast majority (up to 95%) of users transact for free (assuming a regular user would not need more than 5 transactions a day).
 
-Removing this hassle of resource management and simplifying the user experience, we believe that a blockchain running on the Protocol will become very friendly and intuitive for newcomers who are not familiar with blockchain technology and its peculiarities. With this approach, we expect most users to access various high-level applications without even noticing the blockchain behind that powers them. We expect most of the users to be onboarded (and sponsored with a new account if needed) by businesses or dApps that benefit from improved security or other PKI(d) use cases.
+Removing this hassle of resource management and simplifying the user experience, we believe that a blockchain running on the Protocol will become very friendly and intuitive for newcomers who are not familiar with blockchain technology and its peculiarities. With this approach, we expect most users to access various high-level applications without even noticing the blockchain behind that powers them. We expect most of the users to be onboarded (and sponsored with a new account if needed) by businesses or dApps that benefit from improved security or other next-gen PKI use cases.
 
 
 ## Objective and Subjective Measurements
@@ -222,22 +246,6 @@ A blockchain using the Remme Protocol software also awards BPs with tokens earne
 ## State Storage Costs
 
 Storage of the user application state will require an application developer to hold tokens until that state is deleted. If the state is never deleted, then the tokens are effectively removed from circulation.
-
-
-## Block Rewards
-
-The block reward is divided between Block Producers in the following proportions:
-- 70% - Shared between all BPs (both Active and Standby) proportionally to their stake.
-- 20% - Shared between Active BPs (the Top 21) proportionally to the number of votes they received (1 token = 1 vote).
-- 10% - Remme Savings account
-
-In order to maintain the status of a BP, each one will have to re-assert their vote every week. With those who do not keep their votes up to date for more than a week:
-- BP stops getting block rewards
-- The influence of last recorded vote decays by half every year
-
-The block rewards are credited to the account with a call to the system’s contract method claimrewards. Rewards are liquid and may be staked by BP as a separate transaction.
-
-BP does not get rewarded for the missed blocks. The claimrewards method credits rewards in prorated to the number of blocks that got added into the blockchain by a BP. The remainder (rewards for the missed blocks) gets credited to the Remme Savings account.
 
 ## Freezing Accounts
 
