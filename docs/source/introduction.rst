@@ -19,7 +19,6 @@ Supported operating systems
 
 1. Amazon Linux 2
 2. CentOS 7
-3. Ubuntu 16.04
-4. Ubuntu 18.04
-5. MacOS 10.14 (Mojave)
-6. Fedora 25 and higher (Fedora 27 recommended)
+3. Ubuntu 16.04/18.04
+4. MacOS 10.14 (Mojave)
+5. Fedora 25 and higher (Fedora 27 recommended)

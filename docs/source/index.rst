@@ -10,6 +10,31 @@ Welcome to Remme Protocol Developers Portal's!
    :maxdepth: 2
 
    introduction
-   getting-started
-   monitoring
-   troubleshooting
+
+.. toctree::
+   :caption: Smart Contract Development
+   :maxdepth: 2
+
+   developers/prerequisites
+   developers/preparation-step
+   developers/development-wallet-configuration
+   developers/boot-remnode-on-local-testnet
+   developers/create-accounts
+   developers/smart-contract-basics
+   developers/first-smart-contract
+   developers/deploy-token-contract
+   developers/whats-next
+   developers/smart-contract-structure
+   developers/deploy-to-testchain
+   developers/exchanger-contract
+
+.. toctree::
+   :caption: Producers quickstart
+   :maxdepth: 2
+
+   producers/preparation-step
+   producers/install-remprotocol
+   producers/configuration
+   producers/boot-node
+   producers/monitoring
+   producers/troubleshooting
